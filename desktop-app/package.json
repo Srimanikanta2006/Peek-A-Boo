@@ -1,0 +1,13 @@
+﻿{
+  "name": "peek-a-boo",
+  "version": "1.0.0",
+  "description": "Desktop Dynamic Island for YouTube",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^45.0.0",
+    "ws": "^8.22.0"
+  }
+}

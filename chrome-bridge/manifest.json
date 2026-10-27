@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Peek Island - YouTube Bridge",
+  "version": "1.0.0",
+  "description": "Bridges active YouTube playback with your Peek Island desktop notch widget.",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

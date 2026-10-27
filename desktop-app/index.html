@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peek-a-boo Notch</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="island" class="island-collapsed">
+    
+    <!-- Collapsed View: The Sleek Camera Notch Pill -->
+    <div id="notch-bar">
+      <div class="pill-left">
+        <span id="sync-dot" class="sync-dot disconnected"></span>
+        <div class="equalizer" id="equalizer">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+          <span class="bar bar-4"></span>
+        </div>
+      </div>
+      
+      <div class="pill-center">
+        <div class="marquee-wrapper">
+          <span id="pill-title" class="pill-title">Peek-a-boo</span>
+        </div>
+      </div>
+
+      <div class="pill-right">
+        <span class="hint-pill">Peek</span>
+      </div>
+    </div>
+
+    <!-- Expanded View: Glassmorphic Medium Video Card -->
+    <div id="card-content">
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="track-info">
+          <div class="yt-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="#ff0033">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </div>
+          <div class="marquee-track">
+            <span id="card-title" class="card-title">Waiting for YouTube in Chrome...</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <span id="status-badge" class="badge badge-waiting">Connecting...</span>
+          <button id="btn-sound-toggle" class="icon-btn" title="Toggle Notch Audio (Muted by default)">
+            <svg id="icon-muted" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg id="icon-unmuted" class="hidden" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video Display Stage with Native Chromium Webview -->
+      <div id="video-stage">
+        <div id="player-container">
+          <webview id="yt-webview" src="about:blank" allowpopups="false" style="width: 100%; height: 100%; border: none;"></webview>
+        </div>
+
+        <!-- Empty / Waiting State -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-glow">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <p class="empty-main">Open any YouTube video or playlist in Chrome</p>
+          <p class="empty-sub">It will automatically appear right here whenever you hover!</p>
+        </div>
+      </div>
+
+      <!-- Footer Bar -->
+      <div class="card-footer">
+        <div class="progress-bar-bg">
+          <div id="progress-bar" class="progress-bar-fill"></div>
+        </div>
+        <div class="time-display">
+          <span id="curr-time">0:00</span>
+          <span class="sep">/</span>
+          <span id="total-time">0:00</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="player.js"></script>
+</body>
+</html>

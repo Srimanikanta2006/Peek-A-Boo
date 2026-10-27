@@ -1,0 +1,336 @@
+﻿* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0d0e14;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ==========================================================
+   DYNAMIC ISLAND CONTAINER
+   ========================================================== */
+#island {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #11131c;
+  border: 2px solid #38bdf8;
+  border-radius: 18px;
+  color: #ffffff;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+
+#notch-bar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  gap: 12px;
+}
+
+.pill-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Status Indicator Dot */
+.sync-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  transition: all 0.3s ease;
+}
+
+.sync-dot.connected {
+  background: #22c55e;
+  box-shadow: 0 0 12px #22c55e;
+}
+
+/* Equalizer Bars */
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 16px;
+}
+
+.equalizer .bar {
+  width: 3px;
+  height: 100%;
+  background: #38bdf8;
+  border-radius: 2px;
+  transform-origin: bottom;
+  transform: scaleY(0.35);
+  transition: transform 0.2s ease;
+}
+
+.equalizer.playing .bar {
+  animation: bounce 0.8s infinite ease-in-out alternate;
+}
+
+.equalizer.playing .bar-1 { animation-delay: 0.1s; }
+.equalizer.playing .bar-2 { animation-delay: 0.35s; }
+.equalizer.playing .bar-3 { animation-delay: 0.2s; }
+.equalizer.playing .bar-4 { animation-delay: 0.45s; }
+
+@keyframes bounce {
+  0% { transform: scaleY(0.25); }
+  100% { transform: scaleY(1); }
+}
+
+.pill-center {
+  flex: 1;
+  overflow: hidden;
+  text-align: center;
+}
+
+.marquee-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pill-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.pill-right .hint-pill {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 4px 9px;
+  border-radius: 12px;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+}
+
+/* ---------------- EXPANDED STATE (THE VIDEO CARD) ---------------- */
+#island.island-expanded {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+}
+
+#card-content {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 12px 16px;
+}
+
+#island.island-expanded #notch-bar {
+  display: none;
+}
+
+#island.island-expanded #card-content {
+  display: flex;
+}
+
+/* Card Header */
+.card-header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.yt-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 0, 51, 0.15);
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.marquee-track {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.badge-connected {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.badge-waiting {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Video Stage */
+#video-stage {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background: #000000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#player-container, #player-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Empty State */
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1e2235 0%, #0d0e14 100%);
+  text-align: center;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.empty-state.hidden-empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.empty-glow {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.empty-main {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+
+.empty-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Card Footer */
+.card-footer {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 3px;
+  transition: width 0.3s linear;
+}
+
+.time-display {
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: #94a3b8;
+  display: flex;
+  gap: 3px;
+}
+
+.time-display .sep {
+  opacity: 0.5;
+}

@@ -82,7 +82,7 @@ When you're coding, compiling, or building projects with AI, you often have a Yo
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/peek-a-boo.git
+git clone https://github.com/Srimanikanta2006/Peek-A-Boo.git
 cd peek-a-boo
 ```
 
@@ -137,4 +137,5 @@ Double-click:
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
 

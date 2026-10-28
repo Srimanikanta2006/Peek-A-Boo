@@ -1,6 +1,6 @@
-﻿# 🏝️ Peek-a-boo
+﻿# 🏝️ Peek-a-boo: Apple-Style Dynamic Island & Floating Video HUD for Windows
 
-> **An Apple-style Dynamic Island notch for Windows that smoothly expands into a live, zero-copy mirror of the YouTube video playing in your Chrome browser.**
+> **Glance at your YouTube music videos while coding without Alt-Tabbing — zero double-audio, zero embed errors, pure zero-copy GPU streaming.**
 
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)](https://www.microsoft.com/windows)
 [![Electron](https://img.shields.io/badge/Built%20with-Electron%2045-47848F?style=flat&logo=electron)](https://www.electronjs.org/)

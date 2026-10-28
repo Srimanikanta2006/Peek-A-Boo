@@ -1,7 +1,8 @@
-﻿{
+{
   "name": "peek-a-boo",
-  "version": "1.0.0",
-  "description": "Desktop Dynamic Island for YouTube",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A glass island under your laptop camera that mirrors the YouTube video playing in Chrome.",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

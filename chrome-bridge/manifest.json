@@ -1,16 +1,29 @@
 {
   "manifest_version": 3,
-  "name": "Peek Island - YouTube Bridge",
-  "version": "1.0.0",
-  "description": "Bridges active YouTube playback with your Peek Island desktop notch widget.",
-  "permissions": [],
+  "name": "Peek-a-boo Bridge",
+  "version": "2.0.0",
+  "description": "Mirrors the YouTube video playing in Chrome into the Peek-a-boo desktop island.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtf/zhKaw8xJr4eyZcybt0wZhZXqI0RPcTufKznWSks1b259BVT7NwyhrP0hjJdDXzw9dFsLIjSQX4C0GppWApXnmnY6nnYudAvBDY8o+FZRyXHKa4N7UvbYJoSjVgSEPLwNWZgKi1FTYot4zILhr6FmmlVOkbAMwxVlNZYnsfoZI52op2j8T9pHo8JVl2lnVCovHXr49EK5D6+PW/sGBwphbx+LvT8zALicMf6xKYn1pyHfT/bPv+fiBIa+ZgxvXoM1jfCW6vetXhdM/eLfBVyzsNjGU6nu55l5lBBKRUcAh+tFEXxusPpXaf6CXif7+JSy901XDQlKaFuQhr9T3YQIDAQAB",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "ws://127.0.0.1/*",
+    "https://www.youtube.com/*",
+    "https://music.youtube.com/*"
+  ],
   "content_scripts": [
     {
       "matches": [
         "https://www.youtube.com/*",
-        "https://m.youtube.com/*"
+        "https://music.youtube.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ]

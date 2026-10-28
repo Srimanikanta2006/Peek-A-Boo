@@ -20,3 +20,6 @@ Thumbs.db
 
 # Documentation PDFs
 *.pdf
+
+# Personal Study Notes
+DEEP_DIVE_GUIDE.md

@@ -133,15 +133,8 @@ Double-click:
 
 ---
 
-## 📖 Deep Dive & Engineering Secrets
-
-Want to understand the math, the Chromium C++ decoder exploit, and the zero-copy GPU architecture in depth?
-
-Check out our comprehensive technical breakdown:
-👉 **[DEEP_DIVE_GUIDE.md](./DEEP_DIVE_GUIDE.md)**
-
----
 
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+

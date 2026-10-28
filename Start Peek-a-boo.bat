@@ -1,5 +1,5 @@
 @echo off
-title Peek-a-boo Notch
+rem Shells opened from VS Code can carry this, which makes Electron run as plain Node.
+set ELECTRON_RUN_AS_NODE=
 cd /d "%~dp0desktop-app"
-echo Launching Peek-a-boo Notch...
-call npm start
+start "" "node_modules\electron\dist\electron.exe" .

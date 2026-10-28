@@ -1,1 +1,22 @@
+﻿# Dependencies
 node_modules/
+package-lock.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS Files
+Thumbs.db
+[Dd]esktop.ini
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+
+# Documentation PDFs
+*.pdf

@@ -1,336 +1,245 @@
-﻿* {
+﻿/* Sizes come from main.js via renderer.js (--top-gap, --pill-*, --card-*). */
+:root {
+  /* Damped springs sampled from the closed-form solution: expand overshoots ~5%, collapse settles. */
+  --spring-open: linear(0, 0.0378, 0.1312, 0.2553, 0.3912, 0.5254, 0.649, 0.7566, 0.846, 0.9169, 0.9702, 1.0081, 1.0329, 1.0472, 1.0535, 1.0539, 1.0503, 1.0444, 1.0373, 1.0299, 1.0228, 1.0164, 1.011, 1.0066, 1.0032, 1.0006, 0.9989, 0.9978, 0.9972, 0.9971, 0.9971, 0.9974, 1);
+  --spring-close: linear(0, 0.0402, 0.1348, 0.2542, 0.3794, 0.4988, 0.6058, 0.6978, 0.774, 0.8355, 0.8837, 0.9206, 0.9481, 0.9681, 0.9821, 0.9917, 0.998, 1.0018, 1.0039, 1.0048, 1.005, 1.0048, 1.0043, 1.0037, 1);
+  --open-ms: 560ms;
+  --close-ms: 420ms;
+  --pad: 7px;
+
+  --mint: #7cffb2;
+  --amber: #ffc56b;
+}
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
   user-select: none;
+  cursor: default;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
 }
 
-body {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: #0d0e14;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+/* ---------- The island: one glass surface that springs between pill and card ---------- */
 
-/* ==========================================================
-   DYNAMIC ISLAND CONTAINER
-   ========================================================== */
 #island {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #11131c;
-  border: 2px solid #38bdf8;
-  border-radius: 18px;
-  color: #ffffff;
+  position: absolute;
+  top: var(--top-gap);
+  left: 50%;
+  translate: -50% 0;
+  width: var(--pill-w);
+  height: var(--pill-h);
+  border-radius: calc(var(--pill-h) / 2);
   overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.35);
-  display: flex;
-  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02) 60%),
+    rgba(14, 14, 20, 0.46);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 4px 14px -4px rgba(0, 0, 0, 0.45);
+  transition-property: width, height, border-radius, background-color, box-shadow;
+  transition-duration: var(--close-ms);
+  transition-timing-function: var(--spring-close);
 }
 
-#notch-bar {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  gap: 12px;
+#island.expanded {
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03) 45%),
+    rgba(14, 14, 20, 0.62);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 12px 26px -8px rgba(0, 0, 0, 0.55);
+  transition-duration: var(--open-ms);
+  transition-timing-function: var(--spring-open);
 }
 
-.pill-left {
+/* ---------- Collapsed face: glowing dot + music bars ---------- */
+
+.pill-face {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: var(--pill-w);
+  height: var(--pill-h);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  transition: opacity 220ms ease 160ms, scale 320ms var(--spring-close) 120ms, filter 220ms ease 160ms;
 }
 
-/* Status Indicator Dot */
-.sync-dot {
-  width: 10px;
-  height: 10px;
+#island.expanded .pill-face {
+  opacity: 0;
+  scale: 0.7;
+  filter: blur(4px);
+  transition: opacity 110ms ease, scale 160ms ease, filter 110ms ease;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #f59e0b;
-  box-shadow: 0 0 8px #f59e0b;
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.32);
+  transition: background-color 400ms ease, box-shadow 400ms ease;
 }
 
-.sync-dot.connected {
-  background: #22c55e;
-  box-shadow: 0 0 12px #22c55e;
+#island[data-state="playing"] .dot {
+  background: var(--mint);
+  box-shadow: 0 0 6px 1px rgba(124, 255, 178, 0.75), 0 0 14px 3px rgba(124, 255, 178, 0.3);
+  animation: breathe 2.6s ease-in-out infinite;
 }
 
-/* Equalizer Bars */
-.equalizer {
+#island[data-state="paused"] .dot {
+  background: var(--amber);
+  box-shadow: 0 0 6px 1px rgba(255, 197, 107, 0.6);
+}
+
+@keyframes breathe {
+  50% { box-shadow: 0 0 4px 0 rgba(124, 255, 178, 0.55), 0 0 9px 1px rgba(124, 255, 178, 0.18); }
+}
+
+.bars {
   display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 16px;
+  align-items: center;
+  gap: 2.5px;
+  height: 12px;
 }
 
-.equalizer .bar {
+.bars i {
   width: 3px;
   height: 100%;
-  background: #38bdf8;
   border-radius: 2px;
-  transform-origin: bottom;
-  transform: scaleY(0.35);
-  transition: transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.88);
+  scale: 1 0.25;
+  transition: scale 300ms ease;
 }
 
-.equalizer.playing .bar {
-  animation: bounce 0.8s infinite ease-in-out alternate;
+#island[data-state="idle"] .bars i { background: rgba(255, 255, 255, 0.35); }
+
+#island[data-state="playing"] .bars i { animation: bar 0.9s ease-in-out infinite alternate; }
+#island[data-state="playing"] .bars i:nth-child(2) { animation-duration: 0.66s; animation-delay: -0.3s; }
+#island[data-state="playing"] .bars i:nth-child(3) { animation-duration: 1.08s; animation-delay: -0.5s; }
+#island[data-state="playing"] .bars i:nth-child(4) { animation-duration: 0.78s; animation-delay: -0.15s; }
+
+@keyframes bar {
+  0% { scale: 1 0.25; }
+  45% { scale: 1 0.9; }
+  70% { scale: 1 0.5; }
+  100% { scale: 1 1; }
 }
 
-.equalizer.playing .bar-1 { animation-delay: 0.1s; }
-.equalizer.playing .bar-2 { animation-delay: 0.35s; }
-.equalizer.playing .bar-3 { animation-delay: 0.2s; }
-.equalizer.playing .bar-4 { animation-delay: 0.45s; }
+/* ---------- Expanded face: the mirrored video ---------- */
 
-@keyframes bounce {
-  0% { transform: scaleY(0.25); }
-  100% { transform: scaleY(1); }
-}
-
-.pill-center {
-  flex: 1;
-  overflow: hidden;
-  text-align: center;
-}
-
-.marquee-wrapper {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pill-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.3px;
-}
-
-.pill-right .hint-pill {
-  font-size: 10.5px;
-  font-weight: 800;
-  text-transform: uppercase;
-  background: rgba(56, 189, 248, 0.2);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 4px 9px;
-  border-radius: 12px;
-  color: #38bdf8;
-  letter-spacing: 0.5px;
-}
-
-/* ---------------- EXPANDED STATE (THE VIDEO CARD) ---------------- */
-#island.island-expanded {
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
-}
-
-#card-content {
-  display: none;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 12px 16px;
-}
-
-#island.island-expanded #notch-bar {
-  display: none;
-}
-
-#island.island-expanded #card-content {
-  display: flex;
-}
-
-/* Card Header */
-.card-header {
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.track-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  overflow: hidden;
-}
-
-.yt-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 0, 51, 0.15);
-  padding: 5px;
-  border-radius: 6px;
-}
-
-.marquee-track {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.card-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
-}
-
-.badge-connected {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.4);
-}
-
-.badge-waiting {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-}
-
-.icon-btn {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #cbd5e1;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.icon-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* Video Stage */
-#video-stage {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  background: #000000;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-#player-container, #player-container iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-/* Empty State */
-.empty-state {
+.card-face {
   position: absolute;
+  inset: 0;
+  opacity: 0;
+  scale: 0.94;
+  filter: blur(8px);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity 120ms ease, scale 200ms ease, filter 120ms ease;
+}
+
+#island.expanded .card-face {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+  transition: opacity 260ms ease 80ms, scale 520ms var(--spring-open) 40ms, filter 260ms ease 80ms;
+}
+
+/* Fixed size so nothing reflows while the island grows; the island's rounded clip reveals it. */
+.stage {
+  position: absolute;
+  top: var(--pad);
+  left: 50%;
+  translate: -50% 0;
+  width: calc(var(--card-w) - 2 * var(--pad));
+  height: calc(var(--card-h) - 2 * var(--pad));
+  border-radius: calc(22px - var(--pad));
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+#video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+#island.has-frame[data-media="video"] #video { opacity: 1; }
+
+.artwork,
+.empty,
+.paused-badge {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.artwork { inset: 0; }
+
+.artwork img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#artwork-bg {
+  object-fit: cover;
+  filter: blur(28px) brightness(0.55) saturate(1.3);
+  scale: 1.2;
+}
+
+#artwork { object-fit: contain; padding: 22px; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.5)); }
+
+#island[data-media="artwork"] .artwork { opacity: 1; }
+
+.empty {
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at center, #1e2235 0%, #0d0e14 100%);
-  text-align: center;
-  padding: 20px;
-  transition: opacity 0.3s ease;
-}
-
-.empty-state.hidden-empty {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.empty-glow {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: rgba(56, 189, 248, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-}
-
-.empty-main {
-  font-size: 14px;
-  font-weight: 600;
-  color: #f1f5f9;
-  margin-bottom: 4px;
-}
-
-.empty-sub {
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-/* Card Footer */
-.card-footer {
-  height: 24px;
-  display: flex;
-  align-items: center;
   gap: 12px;
-  margin-top: 10px;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }
 
-.progress-bar-bg {
-  flex: 1;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-  overflow: hidden;
+#island[data-media="none"] .empty { opacity: 1; }
+
+.paused-badge {
+  right: 12px;
+  bottom: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(14, 14, 20, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  fill: rgba(255, 255, 255, 0.9);
 }
 
-.progress-bar-fill {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #38bdf8, #818cf8);
-  border-radius: 3px;
-  transition: width 0.3s linear;
-}
-
-.time-display {
-  font-size: 11.5px;
-  font-variant-numeric: tabular-nums;
-  color: #94a3b8;
-  display: flex;
-  gap: 3px;
-}
-
-.time-display .sep {
-  opacity: 0.5;
-}
+#island[data-state="paused"]:not([data-media="none"]) .paused-badge { opacity: 1; }

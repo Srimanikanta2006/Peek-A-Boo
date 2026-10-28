@@ -8,6 +8,10 @@
 [![Zero Extra Audio](https://img.shields.io/badge/Audio-Zero%20Echo-brightgreen)](#how-it-works)
 [![Zero Overhead](https://img.shields.io/badge/Streaming-Zero--Copy%20GPU-blueviolet)](#architecture)
 
+<p align="center">
+  <img src="assets/demo.gif" alt="Peek-a-boo Live Demo" width="720">
+</p>
+
 ---
 
 ## 🎯 Why Peek-a-boo?
@@ -137,5 +141,6 @@ Double-click:
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
 
 

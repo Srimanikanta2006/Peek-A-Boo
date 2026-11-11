@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('peek', {
   layout,
   onExpanded: (cb) => ipcRenderer.on('peek:expanded', (_e, on) => cb(on)),
   onStatus: (cb) => ipcRenderer.on('peek:status', (_e, status) => cb(status)),
-  onFrame: (cb) => ipcRenderer.on('peek:frame', (_e, jpeg) => cb(jpeg))
+  onFrame: (cb) => ipcRenderer.on('peek:frame', (_e, jpeg) => cb(jpeg)),
+  onCursor: (cb) => ipcRenderer.on('peek:cursor', (_e, sample) => cb(sample))
 });

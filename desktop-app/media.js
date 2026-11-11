@@ -6,4 +6,10 @@ function mediaFor(source, hasFrame) {
   return source && hasFrame ? 'video' : 'none';
 }
 
-if (typeof module === 'object') module.exports = { mediaFor };
+// Whether hovering should open the card. With nothing to show, the robot
+// waves instead. While playing it always opens: frames can lag a song change.
+function canOpen(source) {
+  return !!source && (source.playing || source.hasVideo || !!source.artwork);
+}
+
+if (typeof module === 'object') module.exports = { mediaFor, canOpen };

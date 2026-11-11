@@ -1,5 +1,10 @@
 // Decides when the island opens and closes from where the cursor has been.
 // No Electron here, so it can be tested with fake positions and times.
+
+function inZone(zone, x, y) {
+  return x >= zone.x && x < zone.x + zone.w && y >= zone.y && y < zone.y + zone.h;
+}
+
 function createHover({ pillZone, cardZone, expandDelayMs, collapseDelayMs }) {
   let expanded = false;
   let wasInside = false;
@@ -8,8 +13,7 @@ function createHover({ pillZone, cardZone, expandDelayMs, collapseDelayMs }) {
   // x, y are window coordinates. Returns true/false when the island should
   // expand/collapse, or null to leave it as it is.
   return function update(x, y, now) {
-    const zone = expanded ? cardZone : pillZone;
-    const inside = x >= zone.x && x < zone.x + zone.w && y >= zone.y && y < zone.y + zone.h;
+    const inside = inZone(expanded ? cardZone : pillZone, x, y);
     if (inside !== wasInside) {
       wasInside = inside;
       changedAt = now;
@@ -25,4 +29,4 @@ function createHover({ pillZone, cardZone, expandDelayMs, collapseDelayMs }) {
   };
 }
 
-module.exports = { createHover };
+module.exports = { createHover, inZone };

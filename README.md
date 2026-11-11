@@ -125,9 +125,8 @@ Checks that only the Peek-a-boo extension can connect, that the right YouTube ta
 
 1. **Play any video or playlist in Chrome** on [YouTube](https://youtube.com) or [YouTube Music](https://music.youtube.com).
 2. Look right below your laptop webcam — your **glowing frosted pill** is active.
-   * 🟢 **Mint Dot**: Video is playing.
-   * 🟡 **Amber Dot**: Video is paused.
-   * ⚪ **Grey Dot**: Waiting for YouTube.
+   * 🟢 **Mint Dot + bars**: Video is playing.
+   * 🤖 **Robot face**: Nothing is playing, so a little robot face with sparkly glowing blue eyes lives in the pill, and its eyes glide toward your cursor. Wiggle the mouse and it cheers with its paws up; move after a pause and it waves hello; come near the top and it blushes; circle slowly near it and it holds its paws together; spin tight circles and it gets dizzy; rest the mouse and it plays reactions on its own, then dozes off (zZZ) after 30s and blinks awake on the next nudge. Its eyes glow amber while a video is paused.
 3. **Hover your cursor over the notch**: It springs open into the live video!
 4. **Move your cursor away**: It seamlessly folds back into the camera notch.
 5. **Always in the Background**: Right-click the mint dot in your **Windows System Tray** (near the clock) to enable **"Start with Windows"** or quit.

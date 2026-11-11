@@ -1,4 +1,4 @@
-const { layout, onExpanded, onStatus, onFrame } = window.peek;
+const { layout, onExpanded, onStatus, onFrame, onCursor } = window.peek;
 
 const root = document.documentElement.style;
 root.setProperty('--top-gap', `${layout.TOP_GAP}px`);
@@ -15,7 +15,10 @@ const artworkBg = document.getElementById('artwork-bg');
 
 let sourceId = null;
 
-onExpanded((on) => island.classList.toggle('expanded', on));
+onExpanded((on) => {
+  island.classList.toggle('expanded', on);
+  if (!on) wakeRobot();
+});
 
 onStatus(({ source }) => {
   // A different tab took over: don't flash the previous tab's last picture.
@@ -23,7 +26,22 @@ onStatus(({ source }) => {
     sourceId = source?.id ?? null;
     island.classList.remove('has-frame');
   }
-  island.dataset.state = !source ? 'idle' : source.playing ? 'playing' : 'paused';
+  const state = !source ? 'idle' : source.playing ? 'playing' : 'paused';
+  if (state === 'playing' && island.dataset.state !== 'playing') {
+    // Music started: the robot waves first, then morphs into the dot and bars.
+    if (!pendingPlay) {
+      robot.celebrate(performance.now());
+      pendingPlay = setTimeout(() => {
+        pendingPlay = null;
+        island.dataset.state = 'playing';
+      }, CELEBRATE_MS);
+    }
+  } else {
+    clearTimeout(pendingPlay);
+    pendingPlay = null;
+    island.dataset.state = state;
+  }
+  wakeRobot();
   island.dataset.media = mediaFor(source, island.classList.contains('has-frame'));
   if (source?.artwork && artwork.getAttribute('src') !== source.artwork) {
     artwork.src = artworkBg.src = source.artwork;
@@ -59,3 +77,42 @@ async function drawFrames() {
   }
   drawing = false;
 }
+
+// The robot shows while nothing plays. It only draws while visible, and at
+// ~10fps while asleep.
+const robotCtx = document.getElementById('robot').getContext('2d');
+const robot = createRobot();
+let pendingPlay = null;
+let robotRunning = false;
+let robotDrawnAt = 0;
+
+const robotShown = () => island.dataset.state !== 'playing' && !island.classList.contains('expanded');
+
+function wakeRobot() {
+  if (robotRunning || !robotShown()) return;
+  robotRunning = true;
+  requestAnimationFrame(robotFrame);
+}
+
+function robotFrame(now) {
+  if (!robotShown()) {
+    robotRunning = false;
+    return;
+  }
+  requestAnimationFrame(robotFrame);
+  const pose = robot.step(now);
+  if (pose.mood === 'sleep' && now - robotDrawnAt < 100) return;
+  robotDrawnAt = now;
+  drawRobot(robotCtx, pose, {
+    width: layout.PILL.w,
+    height: layout.PILL.h,
+    dpr: devicePixelRatio,
+    paused: island.dataset.state === 'paused'
+  });
+}
+
+onCursor((sample) => {
+  robot.move(sample, performance.now());
+  wakeRobot();
+});
+wakeRobot();

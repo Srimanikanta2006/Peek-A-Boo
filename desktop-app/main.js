@@ -1,7 +1,8 @@
 ﻿const { app, BrowserWindow, Tray, Menu, nativeImage, screen } = require('electron');
 const path = require('path');
 const { createBridge, PORT } = require('./bridge');
-const { createHover } = require('./hover');
+const { createHover, inZone } = require('./hover');
+const { canOpen } = require('./media');
 
 app.setName('Peek-a-boo');
 app.setAppUserModelId('Peek-a-boo');
@@ -119,6 +120,7 @@ function createWindow() {
   contents.on('did-finish-load', () => {
     send('peek:status', lastStatus);
     send('peek:expanded', expanded);
+    lastRobotSample = ''; // a reloaded page needs the cursor again
   });
   // Recover from a renderer crash, but don't spin forever if it crashes on load.
   let crashes = [];
@@ -136,19 +138,46 @@ function createWindow() {
 
 // Polling the cursor is immune to the focus and click-through quirks of
 // transparent windows, and costs one cheap call per tick.
-const hover = createHover({
+const newHover = () => createHover({
   pillZone: PILL_HIT,
   cardZone: CARD_HIT,
   expandDelayMs: EXPAND_DELAY_MS,
   collapseDelayMs: COLLAPSE_DELAY_MS
 });
+let hover = newHover();
+let couldOpen = true;
+let lastRobotSample = '';
 
 function trackHover() {
   if (!win || win.isDestroyed()) return;
   const cursor = screen.getCursorScreenPoint();
   const b = win.getBounds();
-  const next = hover(cursor.x - b.x, cursor.y - b.y, Date.now());
-  if (next !== null) setExpanded(next);
+  const x = cursor.x - b.x;
+  const y = cursor.y - b.y;
+  const source = lastStatus.source;
+
+  // Nothing to show: no empty card, the robot waves instead. Forget any
+  // half-finished hover so the card doesn't pop open the moment there is.
+  const open = canOpen(source);
+  if (!open && couldOpen) {
+    hover = newHover();
+    if (expanded) setExpanded(false);
+  }
+  couldOpen = open;
+  if (open) {
+    const next = hover(x, y, Date.now());
+    if (next !== null) setExpanded(next);
+  }
+
+  // The robot shows whenever nothing plays; send it the cursor, only when it moves.
+  if (!source?.playing) {
+    const sample = { dx: Math.round(x - WIN.w / 2), dy: Math.round(y - TOP_GAP - PILL.h / 2), onPill: inZone(PILL_HIT, x, y) };
+    const key = `${sample.dx},${sample.dy},${sample.onPill}`;
+    if (key !== lastRobotSample) {
+      lastRobotSample = key;
+      send('peek:cursor', sample);
+    }
+  }
 }
 
 function setExpanded(on) {

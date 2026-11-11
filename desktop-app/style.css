@@ -8,7 +8,6 @@
   --pad: 7px;
 
   --mint: #7cffb2;
-  --amber: #ffc56b;
 }
 
 * {
@@ -102,11 +101,6 @@ html, body {
   animation: breathe 2.6s ease-in-out infinite;
 }
 
-#island[data-state="paused"] .dot {
-  background: var(--amber);
-  box-shadow: 0 0 6px 1px rgba(255, 197, 107, 0.6);
-}
-
 @keyframes breathe {
   50% { box-shadow: 0 0 4px 0 rgba(124, 255, 178, 0.55), 0 0 9px 1px rgba(124, 255, 178, 0.18); }
 }
@@ -127,8 +121,6 @@ html, body {
   transition: scale 300ms ease;
 }
 
-#island[data-state="idle"] .bars i { background: rgba(255, 255, 255, 0.35); }
-
 #island[data-state="playing"] .bars i { animation: bar 0.9s ease-in-out infinite alternate; }
 #island[data-state="playing"] .bars i:nth-child(2) { animation-duration: 0.66s; animation-delay: -0.3s; }
 #island[data-state="playing"] .bars i:nth-child(3) { animation-duration: 1.08s; animation-delay: -0.5s; }
@@ -139,6 +131,39 @@ html, body {
   45% { scale: 1 0.9; }
   70% { scale: 1 0.5; }
   100% { scale: 1 1; }
+}
+
+/* ---------- Robot: lives in the pill while nothing plays ---------- */
+
+#robot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: var(--pill-w);
+  height: var(--pill-h);
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity 160ms ease, scale 160ms ease;
+}
+
+#island:not([data-state="playing"]):not(.expanded) #robot {
+  opacity: 1;
+  scale: 1;
+  transition: opacity 260ms ease 80ms, scale 420ms var(--spring-open) 40ms;
+}
+
+#island:not([data-state="playing"]) .pill-face > .dot,
+#island:not([data-state="playing"]) .pill-face > .bars {
+  opacity: 0;
+  scale: 0.6;
+}
+
+.pill-face > .dot,
+.pill-face > .bars {
+  transition: opacity 220ms ease 120ms, scale 320ms var(--spring-open) 120ms,
+    background-color 400ms ease, box-shadow 400ms ease;
 }
 
 /* ---------- Expanded face: the mirrored video ---------- */

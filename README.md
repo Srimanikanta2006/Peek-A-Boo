@@ -81,7 +81,7 @@ When you're coding, compiling, or building projects with AI, you often have a Yo
 
 ### Prerequisites
 * **Windows 10 / 11**
-* **Node.js** (v18 or higher recommended) & **npm**
+* **Node.js 22 or newer** & **npm** (only for `npm install` and `npm test`; the app runs on the Node built into Electron)
 * **Google Chrome** (or Chromium-based browser like Brave or Edge)
 
 ### 1. Clone the Repository
@@ -117,7 +117,7 @@ Double-click:
 cd desktop-app
 npm test
 ```
-Checks that only the Peek-a-boo extension can connect, that the right YouTube tab is shown, and what the card displays. Takes about a second; no Chrome needed.
+Checks that only the Peek-a-boo extension can connect, that the right YouTube tab is shown, what the card displays, when the island opens and closes, and how the extension captures frames. Takes about a second; no Chrome needed.
 
 ---
 

@@ -1,6 +1,7 @@
 ﻿const { app, BrowserWindow, Tray, Menu, nativeImage, screen } = require('electron');
 const path = require('path');
 const { createBridge, PORT } = require('./bridge');
+const { createHover } = require('./hover');
 
 app.setName('Peek-a-boo');
 app.setAppUserModelId('Peek-a-boo');
@@ -25,6 +26,8 @@ const CARD_HIT = { x: (WIN.w - CARD.w) / 2, y: 0, w: CARD.w, h: TOP_GAP + CARD.h
 const HOVER_POLL_MS = 30;
 const EXPAND_DELAY_MS = 110;   // brief intent check so passing cursors don't trigger it
 const COLLAPSE_DELAY_MS = 260; // grace period if the cursor slips off the card
+const MAX_CRASH_RELOADS = 3;   // per CRASH_WINDOW_MS, then stop reloading
+const CRASH_WINDOW_MS = 60_000;
 
 const LOGIN_ITEM = app.isPackaged ? {} : { path: process.execPath, args: [app.getAppPath()] };
 
@@ -117,40 +120,39 @@ function createWindow() {
     send('peek:status', lastStatus);
     send('peek:expanded', expanded);
   });
-  contents.on('render-process-gone', () => contents.reload());
+  // Recover from a renderer crash, but don't spin forever if it crashes on load.
+  let crashes = [];
+  contents.on('render-process-gone', (_e, details) => {
+    const now = Date.now();
+    crashes = crashes.filter((t) => now - t < CRASH_WINDOW_MS);
+    crashes.push(now);
+    if (crashes.length <= MAX_CRASH_RELOADS) return contents.reload();
+    console.error('Renderer keeps crashing, giving up:', details.reason);
+    tray?.setToolTip('Peek-a-boo: display crashed, quit and restart');
+  });
   contents.on('will-navigate', (e) => e.preventDefault());
   contents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }
 
 // Polling the cursor is immune to the focus and click-through quirks of
 // transparent windows, and costs one cheap call per tick.
-let zoneChangedAt = 0;
-let wasInside = false;
+const hover = createHover({
+  pillZone: PILL_HIT,
+  cardZone: CARD_HIT,
+  expandDelayMs: EXPAND_DELAY_MS,
+  collapseDelayMs: COLLAPSE_DELAY_MS
+});
 
 function trackHover() {
   if (!win || win.isDestroyed()) return;
   const cursor = screen.getCursorScreenPoint();
   const b = win.getBounds();
-  const zone = expanded ? CARD_HIT : PILL_HIT;
-  const x = cursor.x - b.x;
-  const y = cursor.y - b.y;
-  const inside = x >= zone.x && x < zone.x + zone.w && y >= zone.y && y < zone.y + zone.h;
-
-  const now = Date.now();
-  if (inside !== wasInside) {
-    wasInside = inside;
-    zoneChangedAt = now;
-  }
-  const held = now - zoneChangedAt;
-  if (!expanded && inside && held >= EXPAND_DELAY_MS) setExpanded(true);
-  else if (expanded && !inside && held >= COLLAPSE_DELAY_MS) setExpanded(false);
+  const next = hover(cursor.x - b.x, cursor.y - b.y, Date.now());
+  if (next !== null) setExpanded(next);
 }
 
 function setExpanded(on) {
   expanded = on;
-  // The hover zone just changed size; restart intent timing from here.
-  wasInside = on;
-  zoneChangedAt = Date.now();
   // While open, swallow clicks so they don't land on whatever is underneath.
   win.setIgnoreMouseEvents(!on);
   if (on) win.moveTop();

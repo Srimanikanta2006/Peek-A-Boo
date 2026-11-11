@@ -22,3 +22,6 @@ Thumbs.db
 
 # Personal Study Notes
 DEEP_DIVE_GUIDE.md
+
+# Claude Code local files
+.claude/

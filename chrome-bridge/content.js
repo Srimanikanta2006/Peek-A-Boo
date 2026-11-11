@@ -103,6 +103,7 @@
       case 'connected':
         appConnected = true;
         lastStateJson = '';
+        hookVideo();
         sendState();
         break;
       case 'disconnected':
@@ -114,6 +115,7 @@
         sendFrame();
         break;
       case 'tick':
+        hookVideo();
         sendState();
         keepDecoderAwake();
         break;
@@ -135,6 +137,8 @@
     });
   }
 
+  // YouTube is a SPA that can swap the player in and out; each tick re-hooks
+  // whatever is current. (Watching the whole DOM instead fires constantly on YouTube.)
   function hookVideo() {
     const video = getVideo();
     if (!video || video === hookedVideo) return;
@@ -145,9 +149,5 @@
     sendState();
   }
 
-  // YouTube is a SPA that swaps the player in and out; keep hooking whatever is current.
-  new MutationObserver(hookVideo).observe(document.documentElement, { childList: true, subtree: true });
-
   connect();
-  hookVideo();
 })();

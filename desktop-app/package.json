@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "node --test"
+    "test": "node --test \"*.test.js\" \"../chrome-bridge/*.test.js\""
   },
   "dependencies": {
     "electron": "^45.0.0",

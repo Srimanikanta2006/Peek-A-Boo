@@ -112,6 +112,13 @@ Double-click:
 * **`Start Peek-a-boo (Silent).vbs`** (Recommended: runs silently in the background with no terminal window).
 * *Or* run `npm start` inside `desktop-app/`.
 
+### Running the Tests
+```bash
+cd desktop-app
+npm test
+```
+Checks that only the Peek-a-boo extension can connect, that the right YouTube tab is shown, and what the card displays. Takes about a second; no Chrome needed.
+
 ---
 
 ## 🎮 How to Use

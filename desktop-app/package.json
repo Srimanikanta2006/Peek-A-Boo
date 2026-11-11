@@ -5,7 +5,8 @@
   "description": "A glass island under your laptop camera that mirrors the YouTube video playing in Chrome.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "test": "node --test"
   },
   "dependencies": {
     "electron": "^45.0.0",

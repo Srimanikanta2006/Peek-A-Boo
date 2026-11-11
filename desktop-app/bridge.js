@@ -13,7 +13,7 @@ const TICK_MS = 1000;           // state refresh + keeps hidden tabs decoding vi
 
 // Owns the Chrome tab connections: decides which tab is the source and, while
 // streaming, pulls frames from it on a steady clock with bounded backpressure.
-function createBridge({ onSource, onFrame, onError }) {
+function createBridge({ onSource, onFrame, onError, port = PORT }) {
   const clients = new Map(); // ws -> { id, state, playingAt }
   let nextId = 1;
   let active = null;
@@ -23,7 +23,7 @@ function createBridge({ onSource, onFrame, onError }) {
 
   const wss = new WebSocketServer({
     host: '127.0.0.1',
-    port: PORT,
+    port,
     maxPayload: 4 * 1024 * 1024,
     verifyClient: ({ origin }) => origin === EXTENSION_ORIGIN
   });

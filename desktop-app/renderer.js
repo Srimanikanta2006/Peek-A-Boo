@@ -18,14 +18,13 @@ let sourceId = null;
 onExpanded((on) => island.classList.toggle('expanded', on));
 
 onStatus(({ source }) => {
-  island.dataset.state = !source ? 'idle' : source.playing ? 'playing' : 'paused';
-  island.dataset.media = source?.hasVideo ? 'video' : source?.artwork ? 'artwork' : 'none';
-
   // A different tab took over: don't flash the previous tab's last picture.
   if ((source?.id ?? null) !== sourceId) {
     sourceId = source?.id ?? null;
     island.classList.remove('has-frame');
   }
+  island.dataset.state = !source ? 'idle' : source.playing ? 'playing' : 'paused';
+  island.dataset.media = mediaFor(source, island.classList.contains('has-frame'));
   if (source?.artwork && artwork.getAttribute('src') !== source.artwork) {
     artwork.src = artworkBg.src = source.artwork;
   }
